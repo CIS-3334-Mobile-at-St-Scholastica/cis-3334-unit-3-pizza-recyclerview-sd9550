@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     TextView textViewSize;
     EditText textOrder;
     Integer pizzaSize = 1;     // Pizza sizes are 0=Small, 1=Medium, 2=Large, 3=X-large
+    RecyclerView recyclerViewOrder;
+    OrderAdapter orderAdapter;
     final String[] PIZZA_SIZES = {"Small","Medium","Large","X-Large"};
 
     @Override
@@ -45,11 +48,16 @@ public class MainActivity extends AppCompatActivity {
         chipPepperoni = findViewById(R.id.chipPepperoni);
         chipChicken = findViewById(R.id.chipChicken);
         chipGreenPepper = findViewById(R.id.chipGreenPeppers);
+        recyclerViewOrder = findViewById(R.id.recyclerViewOrder);
+        orderAdapter = new OrderAdapter(getApplication(), mainViewModel);
 
         setupSeekBar();
         setupAddToOrderButton();
         setPlaceOrderButtons();
         setupLiveDataObserver();
+
+        recyclerViewOrder.setAdapter(orderAdapter);
+        recyclerViewOrder.setLayoutManager(new LinearLayoutManager(this));
     }
 
     /***
@@ -115,12 +123,20 @@ public class MainActivity extends AppCompatActivity {
 
         // ===== Pizza Orders ===== Create the observer for the list of Pizza Orders
         mainViewModel.getAllOrder().observe(this, new Observer<List<Pizza>>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onChanged(@Nullable List<Pizza> allPizzasInOrder) {
                 Log.d("CIS 3334", "MainActivity->LiveData Observer -- List of Pizzas changed");
+                assert allPizzasInOrder != null;
                 Log.d("CIS 3334", "MainActivity -- Number of Pizzas = "+allPizzasInOrder.size());
 
                 // TODO: update the RecycleView Array Adapter
+                if (!allPizzasInOrder.isEmpty()) {
+                    // display the current size of the list of pizzas
+                    textOrder.setText(String.format("Status - Current size: %s", allPizzasInOrder.size()));
+                    orderAdapter.updatePizzaList(allPizzasInOrder);
+                    orderAdapter.notifyDataSetChanged();
+                }
             }
         });
     }
