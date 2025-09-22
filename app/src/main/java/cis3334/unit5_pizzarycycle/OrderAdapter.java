@@ -1,6 +1,9 @@
 package cis3334.unit5_pizzarycycle;
 
 import android.app.Application;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -11,14 +14,9 @@ import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
 
-
-    private final MainViewModel mainViewModel;
-    private final Application application;
     private List<Pizza> pizzaList;
 
     public OrderAdapter(Application application, MainViewModel mainViewModel) {
-        this.application = application;
-        this.mainViewModel = mainViewModel;
         this.pizzaList = new ArrayList<>();
     }
 
@@ -29,16 +27,26 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View itemView = inflater.inflate(R.layout.order_row, parent, false);
+        return new OrderViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
+        if (pizzaList != null && position < pizzaList.size()) {
+            Pizza pizza = pizzaList.get(position);
 
+            // Basic formatting first
+            holder.textViewOrder.setText(pizza.toString());
+
+            Log.d("CIS 3334", "Binding: " + pizza.toString());
+
+        }
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return pizzaList != null ? pizzaList.size() : 0;
     }
 }

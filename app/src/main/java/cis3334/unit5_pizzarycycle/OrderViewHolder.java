@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class OrderViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView imageViewOrder;
-    private TextView textViewOrder;
+    TextView textViewOrder;
     public OrderViewHolder(@NonNull View itemView) {
         super(itemView);
         imageViewOrder = itemView.findViewById(R.id.imageViewOrder);
